@@ -6,6 +6,8 @@
 *.def
 *.dep
 *.bin
+*.obj
+*.exp
 
 *.cfg
 *.json
@@ -42,3 +44,4 @@ CMakeCache.txt
 
 Debug/*
 Release/*
+
