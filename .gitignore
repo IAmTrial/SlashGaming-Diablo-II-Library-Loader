@@ -9,9 +9,13 @@
 
 *.cfg
 *.json
+*.zip
+*.7z
 
 *.log
 *.tlog
+*.idb
+*.pdb
 
 *.cbp
 *.layout
@@ -21,11 +25,12 @@
 *.workspace
 Makefile
 
-*.vcxproj
-*.filters
 *.sdf
 *.sln
 *.suo
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 .vs/
 
 */CMakeFiles/*
@@ -36,3 +41,4 @@ CMakeCache.txt
 .codelite/*
 
 Debug/*
+Release/*
