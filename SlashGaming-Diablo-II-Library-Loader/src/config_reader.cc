@@ -47,7 +47,7 @@ namespace {
 
 const std::filesystem::path kConfigPath = "SlashGaming-Config.json";
 
-constexpr std::string_view kMainEntryKey = "SlashGaming Game Loader";
+constexpr std::string_view kMainEntryKey = "SlashGaming Diablo II Library Loader";
 constexpr std::string_view kMetaDataKey = "!!!Metadata (Do not modify)!!!";
 
 // Note that this signifies the last version where the config formatting and
