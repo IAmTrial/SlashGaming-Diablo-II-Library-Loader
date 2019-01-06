@@ -31,19 +31,28 @@
 
 #include <windows.h>
 
-BOOL WINAPI
+#include "config_reader.h"
+
+namespace sgd2ll {
+
+extern "C" BOOL WINAPI
 DllMain(
     HINSTANCE hinstDLL,
     DWORD fdwReason,
     LPVOID lpvReserved
 ) {
   switch (fdwReason) {
-    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_ATTACH: {
+      std::vector libraries_paths = GetLibrariesPaths();
       break;
+    }
 
-    case DLL_THREAD_DETACH:
+    case DLL_THREAD_DETACH: {
       break;
+    }
   }
 
   return TRUE;
 }
+
+} // namespace sgd2ll
