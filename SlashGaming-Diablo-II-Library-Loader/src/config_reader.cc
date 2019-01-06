@@ -194,16 +194,20 @@ GetLibrariesPaths(
 ) {
   nlohmann::json& config = GetConfig();
 
-  auto& library_loader_path_entry = config[kMainEntryKey.data()][kInjectDllsKey.data()];
-  if (!library_loader_path_entry.is_string()) {
-    library_loader_path_entry = nlohmann::json::array();
+  auto& dlls_paths_entry = config[kMainEntryKey.data()][kInjectDllsKey.data()];
+  if (!dlls_paths_entry.is_array()) {
+    dlls_paths_entry = nlohmann::json::array();
   }
 
-  std::vector library_loader_path(
-      library_loader_path_entry.get<std::vector<std::filesystem::path>>()
+  std::vector dlls_paths_texts =
+      dlls_paths_entry.get<std::vector<std::string_view>>();
+
+  std::vector<std::filesystem::path> dlls_paths(
+      dlls_paths_texts.cbegin(),
+      dlls_paths_texts.cend()
   );
 
-  return library_loader_path;
+  return dlls_paths;
 }
 
 } // namespace sgd2ll
