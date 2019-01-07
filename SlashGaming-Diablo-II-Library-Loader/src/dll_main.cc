@@ -44,6 +44,11 @@ DllMain(
   switch (fdwReason) {
     case DLL_PROCESS_ATTACH: {
       std::vector libraries_paths = GetLibrariesPaths();
+      for (std::filesystem::path library_path : libraries_paths) {
+        LoadLibraryW(
+            library_path.c_str()
+        );
+      }
       break;
     }
 
