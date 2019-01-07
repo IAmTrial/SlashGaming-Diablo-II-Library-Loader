@@ -42,12 +42,12 @@ DllMain(
     LPVOID lpvReserved
 ) {
   switch (fdwReason) {
-    case DLL_THREAD_ATTACH: {
+    case DLL_PROCESS_ATTACH: {
       std::vector libraries_paths = GetLibrariesPaths();
       break;
     }
 
-    case DLL_THREAD_DETACH: {
+    case DLL_PROCESS_DETACH: {
       break;
     }
   }
