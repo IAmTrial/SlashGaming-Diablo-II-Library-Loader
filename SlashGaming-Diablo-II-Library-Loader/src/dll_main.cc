@@ -30,7 +30,9 @@
  */
 
 #include <windows.h>
+#include <iostream>
 
+#include <boost/format.hpp>
 #include <sgd2mapi.h>
 #include "config_reader.h"
 
@@ -79,6 +81,15 @@ DllMain(
     case DLL_PROCESS_ATTACH: {
       std::vector libraries_paths = GetLibrariesPaths();
       for (std::filesystem::path library_path : libraries_paths) {
+        if (!std::filesystem::exists(library_path)) {
+          std::string full_message = (
+            boost::format("The file %s could not be found.")
+                % library_path
+          ).str();
+          std::cerr << full_message << std::endl;
+          continue;
+        }
+
         LoadLibraryW(
             library_path.c_str()
         );
