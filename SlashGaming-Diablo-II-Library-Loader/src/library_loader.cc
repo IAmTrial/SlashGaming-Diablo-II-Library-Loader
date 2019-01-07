@@ -32,15 +32,22 @@
 #include "library_loader.h"
 
 #include <windows.h>
+#include <string.h>
 
 #include "asm_x86_macro.h"
+#include "../include/extern_export.h"
 #include "config_reader.h"
+#include "patch_location.h"
+#include "reverse_game_branch_patch.h"
 
 namespace sgd2ll {
 namespace {
 
-int
-LoadLibraries(int return_value) {
+void
+LoadLibraries(
+    void
+) {
+  // Load all of the libraries.
   std::vector libraries_path = GetLibrariesPaths();
   for (const auto& library_path : libraries_path) {
     LoadLibraryW(
@@ -48,7 +55,7 @@ LoadLibraries(int return_value) {
     );
   }
 
-  return return_value;
+  GetLibraryLoaderPatch().Remove();
 }
 
 } // namespace
@@ -57,9 +64,26 @@ __declspec(naked) void
 LoadLibraries_Stub(
     void
 ) {
-  ASM_X86(push eax)
+  // Load the libraries.
   ASM_X86(call LoadLibraries)
-  ASM_X86(ret 4)
+  ASM_X86(ret)
+
+  /*
+  // Allocate and copy the string into the stack.
+  ASM_X86(sub esp, 0x800)
+  ASM_X86(mov ecx, esp)
+  ASM_X86(push GetGameExecutableFileName)
+  ASM_X86(push ecx)
+  ASM_X86(call strcpy)
+
+  // Set up the return to clear the allocated space on the stack.
+  ASM_X86(push GetStackClearRawAddress)
+
+  // Unload the library.
+  ASM_X86(jmp FreeLibraryA)
+
+  // When FreeLibrary completes,
+  */
 }
 
 } // namespace sgd2ll
