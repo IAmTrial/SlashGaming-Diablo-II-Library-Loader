@@ -29,8 +29,8 @@
  *  the game.
  */
 
-#ifndef SGD2LL_SAFE_GAME_BRANCH_PATCH_H_
-#define SGD2LL_SAFE_GAME_BRANCH_PATCH_H_
+#ifndef SGD2LL_REVERSE_GAME_BRANCH_PATCH_H_
+#define SGD2LL_REVERSE_GAME_BRANCH_PATCH_H_
 
 #include <windows.h>
 
@@ -51,5 +51,5 @@ class ReverseGameBranchPatch : public sgd2mapi::GameBranchPatch {
 
 } // namespace sgd2ll
 
-#endif // SGD2LL_SAFE_GAME_BRANCH_PATCH_H_
+#endif // SGD2LL_REVERSE_GAME_BRANCH_PATCH_H_
 

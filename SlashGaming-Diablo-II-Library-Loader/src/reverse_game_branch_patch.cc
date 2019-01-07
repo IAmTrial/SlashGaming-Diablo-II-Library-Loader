@@ -29,7 +29,7 @@
  *  the game.
  */
 
-#include "safe_game_branch_patch.h"
+#include "reverse_game_branch_patch.h"
 
 #include <memory>
 
