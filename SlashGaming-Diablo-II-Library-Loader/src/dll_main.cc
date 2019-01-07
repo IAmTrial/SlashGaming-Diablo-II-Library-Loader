@@ -30,9 +30,15 @@
  */
 
 #include <windows.h>
+#include <memory>
+#include <mutex>
+#include <string>
 
 #include <sgd2mapi.h>
-#include "config_reader.h"
+#include "library_loader.h"
+#include "patch_location.h"
+#include "patch_mutex.h"
+#include "reverse_game_branch_patch.h"
 
 namespace sgd2ll {
 
@@ -77,17 +83,20 @@ DllMain(
   }
 
   switch (fdwReason) {
-    case DLL_THREAD_ATTACH: {
-      std::vector libraries_paths = GetLibrariesPaths();
-      break;
+    case DLL_PROCESS_ATTACH: {
+      GetLibraryLoaderPatch().Apply();
+      return TRUE;
     }
 
-    case DLL_THREAD_DETACH: {
-      break;
+    case DLL_PROCESS_DETACH: {
+      GetLibraryLoaderPatch().Remove();
+      return TRUE;
+    }
+
+    default: {
+      return FALSE;
     }
   }
-
-  return TRUE;
 }
 
 } // namespace sgd2ll
