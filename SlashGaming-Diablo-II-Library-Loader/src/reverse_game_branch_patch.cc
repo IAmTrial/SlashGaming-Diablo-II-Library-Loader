@@ -137,6 +137,17 @@ ReverseGameBranchPatch::is_patch_applied() const {
   return is_patch_applied_;
 }
 
+ReverseGameBranchPatch&
+GetLibraryLoaderPatch(
+    void
+) {
+  static ReverseGameBranchPatch library_loader_patch =
+      ReverseGameBranchPatch(
+          GetPatchAddress(),
+          &LoadLibraries_Stub,
+          sizeof(std::intptr_t) + 1 + 1
+      );
+  return library_loader_patch;
 }
 
 } // namespace sgd2ll

@@ -61,6 +61,11 @@ class ReverseGameBranchPatch : public sgd2mapi::GameBranchPatch {
   bool is_patch_applied_;
 };
 
+ReverseGameBranchPatch&
+GetLibraryLoaderPatch(
+    void
+);
+
 } // namespace sgd2ll
 
 #endif // SGD2LL_REVERSE_GAME_BRANCH_PATCH_H_
