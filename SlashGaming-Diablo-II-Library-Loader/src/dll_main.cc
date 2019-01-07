@@ -82,6 +82,8 @@ DllMain(
     return TRUE;
   }
 
+  std::lock_guard lock(GetPatchMutex());
+
   switch (fdwReason) {
     case DLL_PROCESS_ATTACH: {
       GetLibraryLoaderPatch().Apply();
