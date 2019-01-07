@@ -32,4 +32,13 @@
 #ifndef SGD2LL_LIBRARY_LOADER_H_
 #define SGD2LL_LIBRARY_LOADER_H_
 
+namespace sgd2ll {
+
+void
+LoadLibraries_Stub(
+    void
+);
+
+} // namespace sgd2ll
+
 #endif // SGD2LL_LIBRARY_LOADER_H_

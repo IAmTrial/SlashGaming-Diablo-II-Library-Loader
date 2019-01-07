@@ -30,3 +30,36 @@
  */
 
 #include "library_loader.h"
+
+#include <windows.h>
+
+#include "asm_x86_macro.h"
+#include "config_reader.h"
+
+namespace sgd2ll {
+namespace {
+
+int
+LoadLibraries(int return_value) {
+  std::vector libraries_path = GetLibrariesPaths();
+  for (const auto& library_path : libraries_path) {
+    LoadLibraryW(
+        library_path.c_str()
+    );
+  }
+
+  return return_value;
+}
+
+} // namespace
+
+__declspec(naked) void
+LoadLibraries_Stub(
+    void
+) {
+  ASM_X86(push eax)
+  ASM_X86(call LoadLibraries)
+  ASM_X86(ret 4)
+}
+
+} // namespace sgd2ll
