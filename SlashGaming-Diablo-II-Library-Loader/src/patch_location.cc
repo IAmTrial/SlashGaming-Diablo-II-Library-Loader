@@ -55,3 +55,20 @@ GetPatchAddress(
 }
 
 }
+
+std::intptr_t
+GetStackClearRawAddress(
+    void
+) {
+  static const sgd2mapi::GameAddress stack_clear_address(
+      sgd2mapi::DefaultLibrary::kD2Win,
+      {
+          {
+              sgd2mapi::GameVersion::k1_13D,
+              std::make_shared<sgd2mapi::GameOffset>(0x17414)
+          }
+      }
+  );
+
+  return stack_clear_address.address();
+}

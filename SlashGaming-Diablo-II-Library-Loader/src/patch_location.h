@@ -45,4 +45,15 @@ GetPatchAddress(
 
 } // namespace sgd2ll
 
+/**
+ * Returns a location in memory, which when returned to, performs the
+ * following ASM operations:
+ * add esp,0x800
+ * ret
+ */
+extern "C" std::intptr_t
+GetStackClearRawAddress(
+    void
+);
+
 #endif // SGD2LL_PATCH_LOCATION_H_
