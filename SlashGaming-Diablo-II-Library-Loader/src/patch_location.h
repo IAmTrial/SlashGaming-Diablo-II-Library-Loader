@@ -29,7 +29,20 @@
  *  the game.
  */
 
+#include <cstdint>
+
+#include <sgd2mapi.h>
+
 #ifndef SGD2LL_PATCH_LOCATION_H_
 #define SGD2LL_PATCH_LOCATION_H_
+
+namespace sgd2ll {
+
+const sgd2mapi::GameAddress&
+GetPatchAddress(
+    void
+);
+
+} // namespace sgd2ll
 
 #endif // SGD2LL_PATCH_LOCATION_H_

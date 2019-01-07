@@ -30,3 +30,28 @@
  */
 
 #include "patch_location.h"
+
+#include <memory>
+
+#include <sgd2mapi.h>
+
+namespace sgd2ll {
+
+const sgd2mapi::GameAddress&
+GetPatchAddress(
+    void
+) {
+  static const sgd2mapi::GameAddress patch_address(
+      sgd2mapi::DefaultLibrary::kD2Win,
+      {
+          {
+              sgd2mapi::GameVersion::k1_13D,
+              std::make_shared<sgd2mapi::GameOffset>(0xE134)
+          }
+      }
+  );
+
+  return patch_address;
+}
+
+}
