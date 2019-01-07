@@ -31,9 +31,39 @@
 
 #include <windows.h>
 
+#include <sgd2mapi.h>
 #include "config_reader.h"
 
 namespace sgd2ll {
+
+namespace {
+
+bool
+IsIntendedProcess(
+    void
+) {
+  HANDLE current_process_handle = GetCurrentProcess();
+  std::unique_ptr current_proc_name = std::make_unique<CHAR[]>(1024);
+
+  DWORD current_process_file_length = GetModuleFileNameA(
+      nullptr,
+      current_proc_name.get(),
+      1024
+  );
+
+  current_proc_name[1023] = '\0';
+
+  int compare_result = _stricmp(
+      current_proc_name.get()
+          + current_process_file_length
+          - sgd2mapi::kGameExecutable.length(),
+      sgd2mapi::kGameExecutable.data()
+  );
+
+  return (compare_result == 0);
+}
+
+} // namespace
 
 extern "C" BOOL WINAPI
 DllMain(
@@ -41,6 +71,11 @@ DllMain(
     DWORD fdwReason,
     LPVOID lpvReserved
 ) {
+  // Check that this is the process we seek to inject in.
+  if (!IsIntendedProcess()) {
+    return TRUE;
+  }
+
   switch (fdwReason) {
     case DLL_THREAD_ATTACH: {
       std::vector libraries_paths = GetLibrariesPaths();
