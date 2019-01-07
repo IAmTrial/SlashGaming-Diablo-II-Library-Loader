@@ -34,9 +34,21 @@
 #include <memory>
 
 #include <sgd2mapi.h>
+#include "library_loader.h"
 #include "patch_location.h"
 
 namespace sgd2ll {
+
+ReverseGameBranchPatch::ReverseGameBranchPatch(
+    const sgd2mapi::GameAddress& game_address,
+    void (*func)(void)
+)
+    : ReverseGameBranchPatch(
+          game_address,
+          func,
+          sizeof(func) + 1
+      ) {
+}
 
 ReverseGameBranchPatch::ReverseGameBranchPatch(
     const sgd2mapi::GameAddress& game_address,
@@ -52,22 +64,29 @@ ReverseGameBranchPatch::ReverseGameBranchPatch(
 }
 
 void ReverseGameBranchPatch::Apply() {
+  if (is_patch_applied()) {
+    return;
+  }
+
   // Construct the branch patch.
   std::vector<BYTE> branch_patch(sizeof(std::intptr_t) + 1);
-  branch_patch[0] = static_cast<BYTE>(branch_type());
-
-  for (int i = 0; i < sizeof(func_ptr()); i += 1) {
-    int shift_amount = (i * 8);
-    branch_patch[i + 1] = static_cast<BYTE>(
-        (func_ptr() >> shift_amount) & 0xFF
-    );
-  }
+  branch_patch[0] = static_cast<BYTE>(0xE9);
 
   std::size_t nop_patch_size =
       (patch_size() - branch_patch.size());
 
   std::intptr_t branch_address =
       (game_address().address() + nop_patch_size);
+
+  std::intptr_t branch_buffer = (
+      func_ptr() - branch_address - (sizeof(func_ptr()) + 1)
+  );
+  for (int i = 0; i < sizeof(func_ptr()); i += 1) {
+    int shift_amount = (i * 8);
+    branch_patch[i + 1] = static_cast<BYTE>(
+        (branch_buffer >> shift_amount) & 0xFF
+    );
+  }
 
   // Start by patching in the function (in an unreachable area).
   WriteProcessMemory(
@@ -83,6 +102,7 @@ void ReverseGameBranchPatch::Apply() {
       nop_patch_size,
       0x90
   );
+
   WriteProcessMemory(
       GetCurrentProcess(),
       reinterpret_cast<LPVOID>(game_address().address()),
@@ -90,6 +110,33 @@ void ReverseGameBranchPatch::Apply() {
       nop_patch.size(),
       nullptr
   );
+
+  is_patch_applied_ = true;
+}
+
+void ReverseGameBranchPatch::Remove() {
+  if (!is_patch_applied()) {
+    return;
+  }
+
+  // Restore the old state of the destination.
+  std::intptr_t address = game_address().address();
+  WriteProcessMemory(
+      GetCurrentProcess(),
+      reinterpret_cast<void*>(address),
+      old_bytes().data(),
+      old_bytes().size(),
+      nullptr
+  );
+
+  is_patch_applied_ = false;
+}
+
+bool
+ReverseGameBranchPatch::is_patch_applied() const {
+  return is_patch_applied_;
+}
+
 }
 
 } // namespace sgd2ll

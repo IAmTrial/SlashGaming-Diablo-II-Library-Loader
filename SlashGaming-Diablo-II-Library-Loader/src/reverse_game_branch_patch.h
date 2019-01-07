@@ -41,12 +41,24 @@ namespace sgd2ll {
 class ReverseGameBranchPatch : public sgd2mapi::GameBranchPatch {
  public:
   ReverseGameBranchPatch(
-    const sgd2mapi::GameAddress& game_address,
-    void (*func)(void),
-    std::size_t patch_size
+      const sgd2mapi::GameAddress& game_address,
+      void (*func)(void)
+  );
+
+  ReverseGameBranchPatch(
+      const sgd2mapi::GameAddress& game_address,
+      void (*func)(void),
+      std::size_t patch_size
   );
 
   void Apply() override;
+
+  void Remove() override;
+
+  bool is_patch_applied() const;
+
+ private:
+  bool is_patch_applied_;
 };
 
 } // namespace sgd2ll
