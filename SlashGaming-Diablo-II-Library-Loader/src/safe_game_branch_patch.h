@@ -32,5 +32,24 @@
 #ifndef SGD2LL_SAFE_GAME_BRANCH_PATCH_H_
 #define SGD2LL_SAFE_GAME_BRANCH_PATCH_H_
 
+#include <windows.h>
+
+#include <sgd2mapi.h>
+
+namespace sgd2ll {
+
+class ReverseGameBranchPatch : public sgd2mapi::GameBranchPatch {
+ public:
+  ReverseGameBranchPatch(
+    const sgd2mapi::GameAddress& game_address,
+    void (*func)(void),
+    std::size_t patch_size
+  );
+
+  void Apply() override;
+};
+
+} // namespace sgd2ll
+
 #endif // SGD2LL_SAFE_GAME_BRANCH_PATCH_H_
 

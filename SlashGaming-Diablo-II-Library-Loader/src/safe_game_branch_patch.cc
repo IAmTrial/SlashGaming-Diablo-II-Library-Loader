@@ -30,3 +30,66 @@
  */
 
 #include "safe_game_branch_patch.h"
+
+#include <memory>
+
+#include <sgd2mapi.h>
+#include "patch_location.h"
+
+namespace sgd2ll {
+
+ReverseGameBranchPatch::ReverseGameBranchPatch(
+    const sgd2mapi::GameAddress& game_address,
+    void (*func)(void),
+    std::size_t patch_size
+)
+    : GameBranchPatch(
+          game_address,
+          sgd2mapi::BranchType::kJump,
+          func,
+          patch_size
+      ) {
+}
+
+void ReverseGameBranchPatch::Apply() {
+  // Construct the branch patch.
+  std::vector<BYTE> branch_patch(sizeof(std::intptr_t) + 1);
+  branch_patch[0] = static_cast<BYTE>(branch_type());
+
+  for (int i = 0; i < sizeof(func_ptr()); i += 1) {
+    int shift_amount = (i * 8);
+    branch_patch[i + 1] = static_cast<BYTE>(
+        (func_ptr() >> shift_amount) & 0xFF
+    );
+  }
+
+  std::size_t nop_patch_size =
+      (patch_size() - branch_patch.size());
+
+  std::intptr_t branch_address =
+      (game_address().address() + nop_patch_size);
+
+  // Start by patching in the function (in an unreachable area).
+  WriteProcessMemory(
+      GetCurrentProcess(),
+      reinterpret_cast<LPVOID>(branch_address),
+      branch_patch.data(),
+      branch_patch.size(),
+      nullptr
+  );
+
+  // Patch in a NOP to turn our unreachable code into reachable.
+  std::vector<BYTE> nop_patch(
+      nop_patch_size,
+      0x90
+  );
+  WriteProcessMemory(
+      GetCurrentProcess(),
+      reinterpret_cast<LPVOID>(game_address().address()),
+      nop_patch.data(),
+      nop_patch.size(),
+      nullptr
+  );
+}
+
+} // namespace sgd2ll
